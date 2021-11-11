@@ -11,6 +11,9 @@ class Video(models.Model):
     # updated
     # state
     # publish_timestamp 
+    @property
+    def is_published(self):
+        return self.active
 
 class VideoPublishedProxy(Video):
     class Meta:
