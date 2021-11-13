@@ -45,7 +45,7 @@ class Video(models.Model):
 
     def get_playlist_ids(self):
         #self.<foreign_obj>_set.all()
-        return list(self.playlist_set.all().values_list('id',flat=True))
+        return list(self.playlist_featured.all().values_list('id',flat=True))
 
     # def save(self,*args,**kwargs):
     #     if self.slug is None:
