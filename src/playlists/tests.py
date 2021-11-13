@@ -8,17 +8,38 @@ from .models import PlayList
 from videos.models import Video
 
 class PlayListModelTestCase(TestCase):
-    def setUp(self):
+    def create_videos(self):
         video_a = Video.objects.create(title="My Title",video_id="abc123")
+        video_b = Video.objects.create(title="My Title",video_id="abc1234")
+        video_c = Video.objects.create(title="My Title",video_id="abc12345")
         self.video_a = video_a
-        self.obj_a = PlayList.objects.create(title="This is my title",video=video_a)
-        self.obj_b = PlayList.objects.create(title="This is my title",state=PublishStateOptions.PUBLISH,video=video_a)
+        self.video_b = video_b
+        self.video_c = video_c
+
+    def setUp(self):
+        self.create_videos()
+        self.obj_a = PlayList.objects.create(title="This is my title",video=self.video_a)
+        obj_b = PlayList.objects.create(title="This is my title",state=PublishStateOptions.PUBLISH,video=self.video_a)
+        # obj_b.videos.set([self.video_a,self.video_b,self.video_c])
+        v_qs = Video.objects.all()
+        obj_b.videos.set(v_qs)
+        obj_b.save()
+        self.obj_b = obj_b
 
     def test_playlist_video(self):
         self.assertEqual(self.obj_a.video,self.video_a)
 
+    def test_playlist_video_items(self):
+        count = self.obj_b.videos.all().count()
+        self.assertEqual(count,3)
+
+    def test_video_playlist_property(self):
+        ids = self.obj_a.video.get_playlist_ids()
+        actual_ids = list(PlayList.objects.filter(video=self.video_a).values_list('id',flat=True))
+        self.assertEqual(ids,actual_ids)
+
     def test_video_playlist(self):
-        qs = self.video_a.playlist_set.all()
+        qs = self.video_a.playlist_featured.all()
         self.assertEqual(qs.count(),2)
 
     def test_slug_field(self):
