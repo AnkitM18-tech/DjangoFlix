@@ -15,14 +15,14 @@ class PlayListModelTestCase(TestCase):
         self.video_a = video_a
         self.video_b = video_b
         self.video_c = video_c
+        self.video_qs = Video.objects.all()
 
     def setUp(self):
         self.create_videos()
         self.obj_a = PlayList.objects.create(title="This is my title",video=self.video_a)
         obj_b = PlayList.objects.create(title="This is my title",state=PublishStateOptions.PUBLISH,video=self.video_a)
         # obj_b.videos.set([self.video_a,self.video_b,self.video_c])
-        v_qs = Video.objects.all()
-        obj_b.videos.set(v_qs)
+        obj_b.videos.set(self.video_qs)
         obj_b.save()
         self.obj_b = obj_b
 
@@ -32,6 +32,12 @@ class PlayListModelTestCase(TestCase):
     def test_playlist_video_items(self):
         count = self.obj_b.videos.all().count()
         self.assertEqual(count,3)
+
+    def test_playlist_video_through_model(self):
+        video_qs =sorted(list(self.video_qs.values_list('id')))
+        playlist_obj_video_qs =sorted(list( self.obj_b.videos.all().values_list('id')))
+        playlist_obj_playlist_item_qs =sorted(list( self.obj_b.playlistitem_set.all().values_list('video')))
+        self.assertEqual(video_qs,playlist_obj_video_qs,playlist_obj_playlist_item_qs)
 
     def test_video_playlist_property(self):
         ids = self.obj_a.video.get_playlist_ids()
