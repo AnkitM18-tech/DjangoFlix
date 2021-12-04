@@ -27,10 +27,12 @@ class PublishStateOptions(models.TextChoices):
     PRIVATE = "PR","Private"
 
 class PlayList(models.Model):
+    parent = models.ForeignKey("self",null=True,on_delete=models.SET_NULL)
+    order = models.IntegerField(default=1)
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)
     slug = models.SlugField(blank=True,null=True)
-    video = models.ForeignKey(Video,related_name='playlist_featured',null=True,on_delete=models.SET_NULL)   #One Video Per Playlist
+    video = models.ForeignKey(Video,related_name='playlist_featured',blank=True,null=True,on_delete=models.SET_NULL)   #One Video Per Playlist
     videos = models.ManyToManyField(Video,related_name='playlist_item',blank=True,through="PlayListItem")
     active = models.BooleanField(default=True)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -39,6 +41,9 @@ class PlayList(models.Model):
     publish_timestamp = models.DateTimeField(auto_now_add=False,auto_now=False,blank=True,null=True)
 
     objects = PlayListManager()
+
+    def __str__(self) :
+        return self.title
 
     @property
     def is_published(self):
@@ -51,6 +56,28 @@ class PlayList(models.Model):
 
 pre_save.connect(publish_state_pre_save,sender=PlayList)
 pre_save.connect(slugify_pre_save,sender=PlayList)
+
+class TVShowProxyManager(PlayListManager):
+    def all(self):
+        return self.get_queryset().filter(parent__isnull=True)
+
+class TVShowProxy(PlayList):
+    objects = TVShowProxyManager()
+    class Meta:
+        verbose_name = "TV Show"
+        verbose_name_plural = "TV Shows"
+        proxy = True
+
+class TVShowSeasonProxyManager(PlayListManager):
+    def all(self):
+        return self.get_queryset().filter(parent__isnull=False)
+
+class TVShowSeasonProxy(PlayList):
+    objects = TVShowSeasonProxyManager()
+    class Meta:
+        verbose_name = "Season"
+        verbose_name_plural = "Seasons"
+        proxy = True
 
 class PlayListItem(models.Model):
     playlist = models.ForeignKey(PlayList,on_delete=models.CASCADE)
