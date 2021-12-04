@@ -1,6 +1,6 @@
 ```python
 from videos.models import Video
-from playlists.models import Playlist
+from playlists.models import PlayList
 
 video_a = Video.objects.create(title='My title', video_id='abc123')
 
@@ -8,7 +8,7 @@ print(video_a)
 
 print(dir(video_a))
 
-playlist_a = Playlist.objects.create(title='This is my title', video=video_a)
+playlist_a = PlayList.objects.create(title='This is my title', video=video_a)
 
 print(dir(playlist_a))
 
