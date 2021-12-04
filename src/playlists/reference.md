@@ -46,63 +46,63 @@ class Student():
 
 
 ```
-playlist_a = Playlist.objects.first()
+Playlist_a = PlayList.objects.first()
 
 ```
 ## Add to ManyToMany
 ```python
 video_a = Video.objects.first()
-playlist_a.videos.add(video_a)
+Playlist_a.videos.add(video_a)
 ```
 
 ## Remove from ManyToMany
 ```python
 video_a = Video.objects.first()
-playlist_a.videos.remove(video_a)
+Playlist_a.videos.remove(video_a)
 ```
 
 
 ## Set (or reset) ManyToMany
 ```python
 video_qs = Video.objects.all()
-playlist_a.videos.set(video_qs)
+Playlist_a.videos.set(video_qs)
 ```
 
 
 ## Clear ManyToMany
 ```python
-playlist_a.videos.clear()
+Playlist_a.videos.clear()
 ```
 
 ## Queryset from ManyToMany
 ```python
-playlist_a.videos.all()
+Playlist_a.videos.all()
 ```
 
 
 
 
 
-## Playlist of Playlists
+## PlayList of PlayLists
 
 
 ```python
 
-from playlists.models import Playlist
+from playlists.models import PlayList
 
-the_office = Playlist.objects.create(title='The Office Series')
+the_office = PlayList.objects.create(title='The Office Series')
 # featured video / videos / 
 
-season_1 = Playlist.objects.create(title='The Office Series Season 1', parent=the_office, order=1)
+season_1 = PlayList.objects.create(title='The Office Series Season 1', parent=the_office, order=1)
 # featured video / videos / 
 
-season_2 = Playlist.objects.create(title='The Office Series Season 2', parent=the_office, order=2)
+season_2 = PlayList.objects.create(title='The Office Series Season 2', parent=the_office, order=2)
 # featured video / videos / 
 
-season_3 = Playlist.objects.create(title='The Office Series Season 3', parent=the_office, order=3)
+season_3 = PlayList.objects.create(title='The Office Series Season 3', parent=the_office, order=3)
 # featured video / videos / 
 
-shows = Playlist.objects.filter(parent__isnull=True)
-show = Playlist.objects.get(id=1)
-# seasons = Playlist.objects.filter(parent=show)
+shows = PlayList.objects.filter(parent__isnull=True)
+show = PlayList.objects.get(id=1)
+# seasons = PlayList.objects.filter(parent=show)
 ```
