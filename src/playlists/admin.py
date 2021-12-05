@@ -4,7 +4,7 @@ from .models import PlayList,PlayListItem,TVShowProxy,TVShowSeasonProxy,MoviePro
 
 class MovieProxyAdmin(admin.ModelAdmin):
     list_display = ['title']
-    fields = ['title','description','video','slug','state']
+    fields = ['title','description','video','category','slug','state']
     class Meta:
         model = MovieProxy
 
@@ -36,7 +36,7 @@ class TVShowSeasonProxyInline(admin.TabularInline):
 class TVShowProxyAdmin(admin.ModelAdmin):
     inlines = [TVShowSeasonProxyInline]
     list_display = ['title']
-    fields = ['title','description','video','slug','state']
+    fields = ['title','description','video','category','slug','state']
     class Meta:
         model = TVShowProxy
     def get_queryset(self,request):
