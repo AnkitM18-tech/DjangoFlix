@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'playlists',
     'videos',
     'categories',
+    'tags',
 ]
 
 MIDDLEWARE = [
