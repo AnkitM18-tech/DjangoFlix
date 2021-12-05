@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.db.models.signals import pre_save
 # Create your models here.
 from videos.models import Video
+from categories.models import Category
 from djangoflix.db.models import PublishStateOptions
 from djangoflix.db.receivers import publish_state_pre_save,slugify_pre_save
 
@@ -34,6 +35,7 @@ class PlayList(models.Model):
         PLAYLIST = "PLY","PlayList"
 
     parent = models.ForeignKey("self",blank=True,null=True,on_delete=models.SET_NULL)
+    category = models.ForeignKey(Category,blank=True,null=True,related_name='playlists',on_delete=models.SET_NULL)
     order = models.IntegerField(default=1)
     title = models.CharField(max_length=200)
     type = models.CharField(max_length=3,choices=PlayListTypeChoices.choices,default=PlayListTypeChoices.PLAYLIST)
