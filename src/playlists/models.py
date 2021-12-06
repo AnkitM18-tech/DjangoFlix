@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils import timezone
 # from django.utils.text import slugify
+from django.contrib.contenttypes.fields import GenericRelation
+from tags.models import TaggedItem
 from django.db.models.signals import pre_save
 # Create your models here.
 from videos.models import Video
@@ -48,6 +50,7 @@ class PlayList(models.Model):
     updated = models.DateTimeField(auto_now=True)
     state = models.CharField(max_length=2, choices=PublishStateOptions.choices,default=PublishStateOptions.DRAFT)
     publish_timestamp = models.DateTimeField(auto_now_add=False,auto_now=False,blank=True,null=True)
+    tags = GenericRelation(TaggedItem,related_query_name='playlist')
 
     objects = PlayListManager()
 
