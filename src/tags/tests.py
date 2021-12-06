@@ -57,4 +57,4 @@ class TaggedItemTestCase(TestCase):
     def test_direct_object_creation(self):
         obj = self.playlist_obj
         tag =TaggedItem.objects.create(content_object=obj,tag="another-one")
-        
+        self.assertIsNotNone(tag.pk)
