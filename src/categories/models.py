@@ -1,5 +1,6 @@
 from django.db import models
-
+from tags.models import TaggedItem
+from django.contrib.contenttypes.fields import GenericRelation
 # Create your models here.
 
 class Category(models.Model):
@@ -8,6 +9,7 @@ class Category(models.Model):
     active = models.BooleanField(default=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    tags = GenericRelation(TaggedItem,related_query_name='category')
 
     def __str__(self):
         return self.title
