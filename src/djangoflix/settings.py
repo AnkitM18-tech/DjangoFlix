@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'videos',
     'categories',
     'tags',
+    'ratings',
 ]
 
 MIDDLEWARE = [
