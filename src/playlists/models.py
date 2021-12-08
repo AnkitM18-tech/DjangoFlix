@@ -6,8 +6,10 @@ from tags.models import TaggedItem
 from django.db.models.signals import pre_save
 # Create your models here.
 from videos.models import Video
+from ratings.models import Rating
 from categories.models import Category
 from djangoflix.db.models import PublishStateOptions
+from django.db.models import Avg,Max,Min
 from djangoflix.db.receivers import publish_state_pre_save,slugify_pre_save
 
 class PlayListQuerySet(models.QuerySet):
@@ -51,11 +53,18 @@ class PlayList(models.Model):
     state = models.CharField(max_length=2, choices=PublishStateOptions.choices,default=PublishStateOptions.DRAFT)
     publish_timestamp = models.DateTimeField(auto_now_add=False,auto_now=False,blank=True,null=True)
     tags = GenericRelation(TaggedItem,related_query_name='playlist')
+    ratings = GenericRelation(Rating,related_query_name='playlist')
 
     objects = PlayListManager()
 
     def __str__(self) :
         return self.title
+
+    def get_rating_average(self):
+        return PlayList.objects.filter(id=self.id).aggregate(Avg("ratings__value"))
+
+    def get_rating_spread(self):
+        return PlayList.objects.filter(id=self.id).aggregate(max=Max("ratings__value"),min=Min("ratings__value"))
 
     @property
     def is_published(self):
