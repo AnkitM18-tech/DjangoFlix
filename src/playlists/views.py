@@ -14,6 +14,9 @@ class PlayListMixin():
         print(context)
         return context
 
+    def get_queryset(self):
+        return super().get_queryset().published()
+
 class MovieListView(PlayListMixin,ListView):
     queryset = MovieProxy.objects.all()
     title = "Movies"
@@ -23,6 +26,6 @@ class TVShowListView(PlayListMixin,ListView):
     title = "TV Shows"
 
 class FeaturedPlayListListView(PlayListMixin,ListView):
-    template_name = "featured_playlist_list.html"
-    # queryset = PlayList.objects.featured_playlists()
+    # template_name = "featured_playlist_list.html"
+    queryset = PlayList.objects.featured_playlists()
     title = "Featured"
