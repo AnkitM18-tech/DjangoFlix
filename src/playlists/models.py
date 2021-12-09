@@ -21,8 +21,11 @@ class PlayListManager(models.Manager):
     def get_queryset(self):
         return PlayListQuerySet(self.model, using=self._db)
 
-    # def published(self):
-    #     return self.get_queryset().published()
+    def published(self):
+        return self.get_queryset().published()
+
+    def featured_playlists(self):
+        return self.get_queryset().filter(type=PlayList.PlayListTypeChoices.PLAYLIST)
 
 class PublishStateOptions(models.TextChoices):
     #CONSTANT = DB_VALUE, USER_DISPLAY_VALUE
