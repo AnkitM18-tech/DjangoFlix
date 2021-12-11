@@ -1,6 +1,8 @@
 # from django.shortcuts import render
 from django.views.generic import ListView,DetailView
 from django.http import Http404
+from django.utils import timezone
+from djangoflix.db.models import PublishStateOptions
 # Create your views here.
 from .models import MovieProxy,TVShowProxy,PlayList,TVShowSeasonProxy
 
@@ -46,10 +48,28 @@ class TVShowSeasonDetailView(PlayListMixin,DetailView):
         kwargs = self.kwargs
         show_slug = kwargs.get("showSlug")
         season_slug = kwargs.get("seasonSlug")
-        qs  =self.get_queryset().filter(parent__slug__iexact=show_slug,slug__iexact=season_slug)
-        if not qs.count() == 1:
+        now = timezone.now()
+        try:
+            obj = TVShowSeasonProxy.objects.get(
+                state=PublishStateOptions.PUBLISH,
+                publish_timestamp__lte=now,
+                parent__slug__iexact=show_slug,
+                slug__iexact=season_slug,
+            )
+        except TVShowSeasonProxy.MultipleObjectsReturned:
+            qs = TVShowSeasonProxy.objects.filter(
+                parent__slug__iexact=show_slug,
+                slug__iexact=season_slug,
+            ).published()
+            obj = qs.first()
+
+        except:
             raise Http404
-        return qs.first()
+        return obj
+        # qs  =self.get_queryset().filter(parent__slug__iexact=show_slug,slug__iexact=season_slug)
+        # if not qs.count() == 1:
+        #     raise Http404
+        # return qs.first()
 
 class FeaturedPlayListListView(PlayListMixin,ListView):
     # template_name = "featured_playlist_list.html"
