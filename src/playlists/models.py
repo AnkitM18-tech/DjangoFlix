@@ -17,6 +17,12 @@ class PlayListQuerySet(models.QuerySet):
         now= timezone.now()
         return self.filter(publish_timestamp__lte = now,state=PublishStateOptions.PUBLISH)
 
+    def movie_or_show(self):
+        return self.filter(
+            Q(type=PlayList.PlayListTypeChoices.MOVIE) |
+            Q(type=PlayList.PlayListTypeChoices.SHOW)
+        )
+
 class PlayListManager(models.Manager):
     def get_queryset(self):
         return PlayListQuerySet(self.model, using=self._db)
