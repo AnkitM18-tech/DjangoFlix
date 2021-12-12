@@ -23,12 +23,14 @@ path -> abc/bac/cba
 '''
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path,include
 from playlists.views import MovieDetailView, MovieListView,TVShowListView,FeaturedPlayListListView,MovieDetailView,PlayListDetailView,TVShowDetailView,TVShowSeasonDetailView
 
 urlpatterns = [
     path('', FeaturedPlayListListView.as_view()),
     path('admin/', admin.site.urls),
+    path('category/',include('categories.urls')),
+    path('categories/',include('categories.urls')),
     path('movies/', MovieListView.as_view()),
     path('movies/<slug:slug>/', MovieDetailView.as_view()),
     path('media/<int:pk>/',PlayListDetailView.as_view()),
