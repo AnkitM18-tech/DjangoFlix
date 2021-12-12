@@ -6,6 +6,21 @@ from djangoflix.db.models import PublishStateOptions
 # Create your views here.
 from .models import MovieProxy,TVShowProxy,PlayList,TVShowSeasonProxy
 from .mixins import PlayListMixin
+# from django.views import View
+
+class SearchView(PlayListMixin,ListView):
+    def get_context_data(self):
+        context = super().get_context_data()
+        query = self.request.GET.get("q") 
+        if query is not None:
+            context['title'] = f"Searched for {query}"
+        else:
+            context['title'] = "Perform a search"
+        return context
+
+    def get_queryset(self):
+        query = self.request.GET.get("q")  #request.GET =  {}
+        return PlayList.objects.all().movie_or_show().search(query=query)
 
 class MovieListView(PlayListMixin,ListView):
     queryset = MovieProxy.objects.all()
