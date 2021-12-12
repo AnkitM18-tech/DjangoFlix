@@ -72,6 +72,6 @@ class TVShowSeasonDetailView(PlayListMixin,DetailView):
         # return qs.first()
 
 class FeaturedPlayListListView(PlayListMixin,ListView):
-    # template_name = "featured_playlist_list.html"
+    template_name = "playlists/featured_list.html"
     queryset = PlayList.objects.featured_playlists()
     title = "Featured"
