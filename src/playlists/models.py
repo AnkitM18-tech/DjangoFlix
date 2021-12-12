@@ -9,7 +9,7 @@ from videos.models import Video
 from ratings.models import Rating
 from categories.models import Category
 from djangoflix.db.models import PublishStateOptions
-from django.db.models import Avg,Max,Min
+from django.db.models import Avg,Max,Min,Q
 from djangoflix.db.receivers import publish_state_pre_save,unique_slugify_pre_save
 
 class PlayListQuerySet(models.QuerySet):
@@ -42,6 +42,7 @@ class PlayList(models.Model):
         PLAYLIST = "PLY","PlayList"
 
     parent = models.ForeignKey("self",blank=True,null=True,on_delete=models.SET_NULL)
+    related = models.ManyToManyField("self",blank=True,related_name="related",through="PlayListRelated")
     category = models.ForeignKey(Category,blank=True,null=True,related_name='playlists',on_delete=models.SET_NULL)
     order = models.IntegerField(default=1)
     title = models.CharField(max_length=200)
@@ -175,6 +176,19 @@ class PlayListItem(models.Model):
     objects = PlayListItemManager()
     class Meta:
         ordering=['order','-timestamp']
+
+#qs = PlayList.objects.filter(type=PlayList.PlayListTypeChoices.MOVIE)
+#qs2 = PlayList.objects.filter(type=PlayList.PlayListTypeChoices.SHOW)
+#final_qs = qs | qs2
+
+def pr_limit_choices_to():
+    return Q(type=PlayList.PlayListTypeChoices.MOVIE) | Q(type=PlayList.PlayListTypeChoices.SHOW)
+
+class PlayListRelated(models.Model):
+    playlist = models.ForeignKey(PlayList,on_delete=models.CASCADE)
+    related  = models.ForeignKey(PlayList,on_delete=models.CASCADE, related_name="related_item",limit_choices_to=pr_limit_choices_to)
+    order = models.IntegerField(default=1)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
 pre_save.connect(publish_state_pre_save,sender=TVShowProxy)
 pre_save.connect(unique_slugify_pre_save,sender=TVShowProxy)
