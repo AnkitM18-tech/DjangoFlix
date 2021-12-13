@@ -25,6 +25,7 @@ path -> abc/bac/cba
 from django.contrib import admin
 from django.urls import path,include
 from playlists.views import MovieDetailView, MovieListView,TVShowListView,FeaturedPlayListListView,MovieDetailView,PlayListDetailView,TVShowDetailView,TVShowSeasonDetailView,SearchView
+from ratings.views import rate_object_view
 
 urlpatterns = [
     path('', FeaturedPlayListListView.as_view()),
@@ -40,4 +41,5 @@ urlpatterns = [
     path('shows/', TVShowListView.as_view()),
     path('tags/',include('tags.urls')),
     path('search/', SearchView.as_view()),
+    path('object-rate/',rate_object_view),
 ]
